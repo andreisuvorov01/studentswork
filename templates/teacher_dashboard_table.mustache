@@ -1,0 +1,87 @@
+{{!
+    Teacher Dashboard Table Partial Template
+    
+    @template local_studentworks/teacher_dashboard_table
+    
+    Context variables:
+    * works - array of work objects
+    * filters - filter options with statuses
+}}
+
+<section class="sw-table-container" role="region" aria-label="{{#str}}workslist, local_studentworks{{/str}}">
+    <table class="sw-table" role="table">
+        <thead>
+            <tr role="row">
+                <th scope="col" role="columnheader">{{#str}}worktype, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}topic, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}discipline, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}author, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}status, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}timecreated, local_studentworks{{/str}}</th>
+                <th scope="col" role="columnheader">{{#str}}actions, local_studentworks{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#works}}
+            <tr role="row" class="sw-animate-fade-in" style="animation-delay: {{delay}}s;">
+                <td role="cell">
+                    <span class="sw-work-type">{{worktype}}</span>
+                </td>
+                <td role="cell">
+                    <strong>{{topic}}</strong>
+                </td>
+                <td role="cell">{{discipline}}</td>
+                <td role="cell">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="sw-avatar" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                            {{author_initials}}
+                        </span>
+                        <span>{{author}}</span>
+                    </div>
+                </td>
+                <td role="cell">
+                    <span class="sw-badge sw-badge-{{statusclass}}">{{status}}</span>
+                </td>
+                <td role="cell">
+                    <time datetime="{{timecreated_iso}}">{{timecreated}}</time>
+                </td>
+                <td role="cell">
+                    <div class="sw-actions-group">
+                        <a href="{{viewurl}}" class="sw-btn sw-btn-sm sw-btn-outline"
+                           aria-label="{{#str}}view, local_studentworks{{/str}}: {{topic}}">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            <span class="sr-only">{{#str}}view, local_studentworks{{/str}}</span>
+                        </a>
+                        {{#canreview}}
+                        {{^hasreview}}
+                        <a href="{{reviewurl}}" class="sw-btn sw-btn-sm sw-btn-primary"
+                           aria-label="{{#str}}checkwork, local_studentworks{{/str}}: {{topic}}">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            {{#str}}checkwork, local_studentworks{{/str}}
+                        </a>
+                        {{/hasreview}}
+                        {{#hasreview}}
+                        <a href="{{reviewurl}}" class="sw-btn sw-btn-sm sw-btn-success"
+                           aria-label="{{#str}}updatereview, local_studentworks{{/str}}: {{topic}}">
+                            <i class="fa fa-refresh" aria-hidden="true"></i>
+                            <span class="sr-only">{{#str}}updatereview, local_studentworks{{/str}}</span>
+                        </a>
+                        {{/hasreview}}
+                        {{/canreview}}
+                        {{#canupdatestatus}}
+                        <select class="sw-select sw-select-sm sw-status-select"
+                                data-workid="{{id}}"
+                                data-current-status="{{statuscode}}"
+                                aria-label="{{#str}}updatestatus, local_studentworks{{/str}}">
+                            {{#filters.statuses}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                            {{/filters.statuses}}
+                        </select>
+                        {{/canupdatestatus}}
+                    </div>
+                </td>
+            </tr>
+            {{/works}}
+        </tbody>
+    </table>
+</section>

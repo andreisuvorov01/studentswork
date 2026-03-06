@@ -1,0 +1,98 @@
+{{!
+    Student Works Page Template - Corporate UI/UX 2025
+    
+    @template local_studentworks/works_page
+    
+    Context variables:
+    * works - array of work objects
+    * uploadurl - URL for upload
+    * hasworks - boolean
+    * stats - statistics object with total, reviewed, pending
+}}
+
+<div class="sw-container" data-region="studentworks-works">
+    
+    {{! Header Section with Glassmorphism Effect }}
+    <header class="sw-header" role="banner">
+        <div class="sw-header-content">
+            <h1 class="sw-title">{{#str}}pluginname, local_studentworks{{/str}}</h1>
+            <p class="sw-subtitle">{{#str}}myworksdesc, local_studentworks{{/str}}</p>
+        </div>
+        <a href="{{uploadurl}}" class="sw-btn sw-btn-primary" aria-label="{{#str}}uploadwork, local_studentworks{{/str}}">
+            <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+            <span>{{#str}}uploadwork, local_studentworks{{/str}}</span>
+        </a>
+    </header>
+
+    {{! Statistics Section }}
+    {{#stats}}
+    <section class="sw-stats" role="region" aria-label="{{#str}}statistics, local_studentworks{{/str}}">
+        <article class="sw-stat-card sw-animate-fade-in">
+            <div class="sw-stat-value">{{total}}</div>
+            <div class="sw-stat-label">{{#str}}totalworks, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="sw-stat-value sw-text-success">{{reviewed}}</div>
+            <div class="sw-stat-label">{{#str}}reviewed, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="sw-stat-value sw-text-warning">{{pending}}</div>
+            <div class="sw-stat-label">{{#str}}pending, local_studentworks{{/str}}</div>
+        </article>
+    </section>
+    {{/stats}}
+
+    {{! Works Grid }}
+    {{#hasworks}}
+    <section class="sw-works-grid" role="region" aria-label="{{#str}}workslist, local_studentworks{{/str}}">
+        {{#works}}
+        <article class="sw-card" tabindex="0" role="article" aria-labelledby="work-title-{{id}}">
+            <div class="sw-card-header">
+                <span class="sw-badge sw-badge-{{statusclass}}" role="status">
+                    {{status}}
+                </span>
+                <span class="sw-work-type">{{worktype}}</span>
+            </div>
+            <div class="sw-card-body">
+                <h3 class="sw-card-title" id="work-title-{{id}}">{{topic}}</h3>
+                <p class="sw-card-meta">
+                    <i class="fa fa-book" aria-hidden="true"></i> {{discipline}}
+                </p>
+                {{#hasgrade}}
+                <p class="sw-card-grade" style="margin: 0.5rem 0;">
+                    <i class="fa fa-star" aria-hidden="true" style="color: var(--sw-warning);"></i>
+                    <strong>{{#str}}grade, local_studentworks{{/str}}:</strong>
+                    <span class="sw-badge sw-badge-success" style="font-size: 1rem; padding: 0.25rem 0.75rem;">{{grade}}</span>
+                </p>
+                {{/hasgrade}}
+                <div class="sw-card-footer">
+                    <time class="sw-date" datetime="{{timecreated_iso}}">
+                        <i class="fa fa-calendar-o" aria-hidden="true"></i> {{timecreated}}
+                    </time>
+                    <a href="{{viewurl}}" class="sw-btn sw-btn-sm sw-btn-outline"
+                       aria-label="{{#str}}view, local_studentworks{{/str}}: {{topic}}">
+                        {{#str}}view, local_studentworks{{/str}}
+                    </a>
+                </div>
+            </div>
+        </article>
+        {{/works}}
+    </section>
+    {{/hasworks}}
+
+    {{! Empty State }}
+    {{^hasworks}}
+    <section class="sw-empty" role="region" aria-label="{{#str}}empty, local_studentworks{{/str}}">
+        <div class="sw-empty-icon" aria-hidden="true">
+            <i class="fa fa-folder-open-o"></i>
+        </div>
+        <h3 class="sw-empty-title">{{#str}}noworks, local_studentworks{{/str}}</h3>
+        <p class="sw-empty-text">{{#str}}noworksdesc, local_studentworks{{/str}}</p>
+        <a href="{{uploadurl}}" class="sw-btn sw-btn-primary sw-btn-lg">
+            <i class="fa fa-upload" aria-hidden="true"></i>
+            {{#str}}uploadfirst, local_studentworks{{/str}}
+        </a>
+    </section>
+    {{/hasworks}}
+
+</div>

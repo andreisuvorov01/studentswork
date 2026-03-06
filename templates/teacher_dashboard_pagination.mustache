@@ -1,0 +1,45 @@
+{{!
+    Teacher Dashboard Pagination Partial Template
+    
+    @template local_studentworks/teacher_dashboard_pagination
+    
+    Context variables:
+    * pages - array of page objects
+    * hasprev - boolean
+    * hasnext - boolean
+    * prevpage - int
+    * nextpage - int
+}}
+
+<nav class="sw-pagination" role="navigation" aria-label="{{#str}}pagination, local_studentworks{{/str}}">
+    {{#hasprev}}
+    <button type="button" class="sw-page-btn" data-page="{{prevpage}}" aria-label="{{#str}}previous, local_studentworks{{/str}}">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    {{/hasprev}}
+    {{^hasprev}}
+    <button class="sw-page-btn" disabled aria-disabled="true">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+    </button>
+    {{/hasprev}}
+
+    {{#pages}}
+    {{#current}}
+    <span class="sw-page-btn active" aria-current="page">{{number}}</span>
+    {{/current}}
+    {{^current}}
+    <button type="button" class="sw-page-btn" data-page="{{number}}" aria-label="{{#str}}page, local_studentworks{{/str}} {{number}}">{{number}}</button>
+    {{/current}}
+    {{/pages}}
+
+    {{#hasnext}}
+    <button type="button" class="sw-page-btn" data-page="{{nextpage}}" aria-label="{{#str}}next, local_studentworks{{/str}}">
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+    </button>
+    {{/hasnext}}
+    {{^hasnext}}
+    <button class="sw-page-btn" disabled aria-disabled="true">
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+    </button>
+    {{/hasnext}}
+</nav>

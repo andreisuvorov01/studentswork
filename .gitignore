@@ -1,0 +1,25 @@
+# Moodle
+config.php
+.environment
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Composer (если используется)
+vendor/
+composer.lock
+
+# Node (если используется)
+node_modules/
+package-lock.json
+
+# AMD build
+amd/build/

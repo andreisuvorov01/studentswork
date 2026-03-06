@@ -1,0 +1,37 @@
+{{!
+    Toast Notification Template - Corporate UI/UX 2025
+    
+    @template local_studentworks/toast
+    
+    Context variables:
+    * message - notification message
+    * type - notification type (success, warning, danger, info)
+    * title - optional title
+    * has_title - boolean
+}}
+
+<div class="sw-toast sw-toast-{{type}}" role="alert" aria-live="polite">
+    {{#type_success}}
+    <i class="fa fa-check-circle sw-toast-icon" aria-hidden="true"></i>
+    {{/type_success}}
+    {{#type_warning}}
+    <i class="fa fa-exclamation-triangle sw-toast-icon" aria-hidden="true"></i>
+    {{/type_warning}}
+    {{#type_danger}}
+    <i class="fa fa-times-circle sw-toast-icon" aria-hidden="true"></i>
+    {{/type_danger}}
+    {{#type_info}}
+    <i class="fa fa-info-circle sw-toast-icon" aria-hidden="true"></i>
+    {{/type_info}}
+    
+    <div class="sw-toast-content">
+        {{#has_title}}
+        <div class="sw-toast-title">{{title}}</div>
+        {{/has_title}}
+        <div class="sw-toast-message">{{message}}</div>
+    </div>
+    
+    <button class="sw-toast-close" aria-label="{{#str}}close, core{{/str}}">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </button>
+</div>

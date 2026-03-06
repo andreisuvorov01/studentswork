@@ -1,0 +1,17 @@
+{{!
+    Teacher Dashboard Empty State Partial Template
+    
+    @template local_studentworks/teacher_dashboard_empty
+}}
+
+<section class="sw-empty" role="region">
+    <div class="sw-empty-icon" aria-hidden="true">
+        <i class="fa fa-inbox"></i>
+    </div>
+    <h3 class="sw-empty-title">{{#str}}noworksfound, local_studentworks{{/str}}</h3>
+    <p class="sw-empty-text">{{#str}}noworksfounddesc, local_studentworks{{/str}}</p>
+    <button type="button" class="sw-btn sw-btn-secondary" data-action="clear-filters">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        {{#str}}clearfilters, local_studentworks{{/str}}
+    </button>
+</section>

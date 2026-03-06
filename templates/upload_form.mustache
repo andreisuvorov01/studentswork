@@ -1,0 +1,138 @@
+{{!
+    Upload Form Template - Corporate UI/UX 2025
+    
+    @template local_studentworks/upload_form
+    
+    Context variables:
+    * title - page title
+    * form - rendered form HTML
+}}
+
+<div class="sw-container" data-region="studentworks-upload">
+    
+    {{! Header }}
+    <header class="sw-header" role="banner" style="padding: var(--sw-space-5) var(--sw-space-6);">
+        <div class="sw-header-content">
+            <nav aria-label="{{#str}}breadcrumb, local_studentworks{{/str}}">
+                <a href="{{backurl}}" class="sw-btn sw-btn-ghost sw-btn-sm" style="margin-bottom: var(--sw-space-2);">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    {{#str}}back, local_studentworks{{/str}}
+                </a>
+            </nav>
+            <h1 class="sw-title" style="font-size: 1.75rem;">{{title}}</h1>
+        </div>
+    </header>
+
+    {{! Form Container }}
+    <section class="sw-info-card" style="max-width: 800px;">
+        <div class="sw-form-wrapper">
+            {{{form}}}
+        </div>
+    </section>
+
+</div>
+
+{{! Add custom styles for form elements }}
+<style>
+.sw-form-wrapper .fcontainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sw-space-5);
+}
+
+.sw-form-wrapper .form-group {
+    margin-bottom: 0;
+}
+
+.sw-form-wrapper label {
+    font-weight: 600;
+    color: var(--sw-text);
+    margin-bottom: var(--sw-space-2);
+    display: block;
+}
+
+.sw-form-wrapper input[type="text"],
+.sw-form-wrapper select,
+.sw-form-wrapper textarea {
+    width: 100%;
+    padding: var(--sw-space-3) var(--sw-space-4);
+    font-size: 0.9375rem;
+    color: var(--sw-text);
+    background: var(--sw-bg);
+    border: 1px solid var(--sw-border);
+    border-radius: var(--sw-radius-sm);
+    transition: all var(--sw-transition-fast);
+}
+
+.sw-form-wrapper input[type="text"]:focus,
+.sw-form-wrapper select:focus,
+.sw-form-wrapper textarea:focus {
+    outline: none;
+    border-color: var(--sw-primary);
+    box-shadow: 0 0 0 3px var(--sw-primary-light);
+}
+
+.sw-form-wrapper .form-control {
+    border-radius: var(--sw-radius-sm);
+    border: 1px solid var(--sw-border);
+}
+
+.sw-form-wrapper .form-control:focus {
+    border-color: var(--sw-primary);
+    box-shadow: 0 0 0 3px var(--sw-primary-light);
+}
+
+.sw-form-wrapper .btn-primary {
+    background: linear-gradient(135deg, var(--sw-primary) 0%, var(--sw-primary-hover) 100%);
+    border: none;
+    padding: var(--sw-space-3) var(--sw-space-6);
+    border-radius: var(--sw-radius);
+    font-weight: 500;
+    transition: all var(--sw-transition);
+}
+
+.sw-form-wrapper .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sw-shadow-md);
+}
+
+.sw-form-wrapper .btn-secondary {
+    background: var(--sw-secondary-light);
+    color: var(--sw-text);
+    border: 1px solid var(--sw-border);
+    padding: var(--sw-space-3) var(--sw-space-6);
+    border-radius: var(--sw-radius);
+    font-weight: 500;
+    transition: all var(--sw-transition);
+}
+
+.sw-form-wrapper .btn-secondary:hover {
+    background: var(--sw-border);
+}
+
+.sw-form-wrapper .fdescription {
+    font-size: 0.875rem;
+    color: var(--sw-text-muted);
+    margin-top: var(--sw-space-1);
+}
+
+.sw-form-wrapper .form-buttons {
+    display: flex;
+    gap: var(--sw-space-3);
+    margin-top: var(--sw-space-6);
+    padding-top: var(--sw-space-6);
+    border-top: 1px solid var(--sw-border);
+}
+
+.sw-form-wrapper .filemanager-loading {
+    display: none;
+}
+
+.sw-form-wrapper .fm-emptyview {
+    padding: var(--sw-space-8);
+    text-align: center;
+    background: var(--sw-secondary-light);
+    border: 2px dashed var(--sw-border);
+    border-radius: var(--sw-radius);
+}
+</style>

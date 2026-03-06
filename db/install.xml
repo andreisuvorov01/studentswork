@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/studentworks/db"
+       VERSION="2026030300"
+       COMMENT="XMLDB file for local_studentworks"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+
+    <TABLES>
+        <TABLE NAME="local_studentworks"
+               COMMENT="Stores uploaded student works">
+
+            <FIELDS>
+                <FIELD NAME="id"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="true"
+                       SEQUENCE="true"
+                       COMMENT="Primary key"/>
+
+                <FIELD NAME="userid"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="true"
+                       COMMENT="User ID"/>
+
+                <FIELD NAME="worktype"
+                       TYPE="char"
+                       LENGTH="50"
+                       NOTNULL="true"
+                       COMMENT="Type of work"/>
+
+                <FIELD NAME="discipline"
+                       TYPE="char"
+                       LENGTH="255"
+                       NOTNULL="true"
+                       COMMENT="Discipline name"/>
+
+                <FIELD NAME="topic"
+                       TYPE="text"
+                       NOTNULL="true"
+                       COMMENT="Work topic"/>
+
+                <FIELD NAME="studentfile"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="false"
+                       COMMENT="Student file ID"/>
+
+                <FIELD NAME="reviewfile"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="false"
+                       COMMENT="Review file ID"/>
+
+                <FIELD NAME="timecreated"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="true"
+                       COMMENT="Creation timestamp"/>
+
+                <FIELD NAME="timemodified"
+                       TYPE="int"
+                       LENGTH="10"
+                       NOTNULL="true"
+                       COMMENT="Modification timestamp"/>
+
+                <FIELD NAME="status"
+                       TYPE="char"
+                       LENGTH="20"
+                       NOTNULL="true"
+                       DEFAULT="submitted"
+                       SEQUENCE="false"
+                       COMMENT="Work status"/>
+
+                <FIELD NAME="grade"
+                       TYPE="int"
+                       LENGTH="3"
+                       NOTNULL="false"
+                       SEQUENCE="false"
+                       COMMENT="Work grade (0-100)"/>
+            </FIELDS>
+
+            <KEYS>
+                <KEY NAME="primary"
+                     TYPE="primary"
+                     FIELDS="id"/>
+
+                <KEY NAME="userid"
+                     TYPE="foreign"
+                     FIELDS="userid"
+                     REFTABLE="user"
+                     REFFIELDS="id"/>
+            </KEYS>
+
+            <INDEXES>
+                <INDEX NAME="userid_idx"
+                       UNIQUE="false"
+                       FIELDS="userid"/>
+
+                <INDEX NAME="worktype_idx"
+                       UNIQUE="false"
+                       FIELDS="worktype"/>
+
+                <INDEX NAME="timecreated_idx"
+                       UNIQUE="false"
+                       FIELDS="timecreated"/>
+            </INDEXES>
+
+        </TABLE>
+    </TABLES>
+</XMLDB>

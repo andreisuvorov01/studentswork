@@ -1,0 +1,274 @@
+{{!
+    Teacher Dashboard Template - Corporate UI/UX 2025
+    
+    @template local_studentworks/teacher_dashboard
+    
+    Context variables:
+    * works - array of work objects
+    * hasworks - boolean
+    * stats - statistics object
+    * filters - filter options
+    * searchquery - current search query
+    * pagination - pagination data
+}}
+
+<div class="sw-container" data-region="studentworks-dashboard">
+    
+    {{! Header Section }}
+    <header class="sw-header" role="banner">
+        <div class="sw-header-content">
+            <h1 class="sw-title">{{#str}}allworks, local_studentworks{{/str}}</h1>
+            <p class="sw-subtitle">{{#str}}dashboarddesc, local_studentworks{{/str}}</p>
+        </div>
+    </header>
+
+    {{! Statistics Section }}
+    {{#stats}}
+    <section class="sw-stats" role="region" aria-label="{{#str}}statistics, local_studentworks{{/str}}">
+        <article class="sw-stat-card sw-animate-fade-in">
+            <div class="sw-stat-value" data-stat="total">{{total}}</div>
+            <div class="sw-stat-label">{{#str}}totalworks, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="sw-stat-value sw-text-success" data-stat="reviewed">{{reviewed}}</div>
+            <div class="sw-stat-label">{{#str}}reviewed, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="sw-stat-value sw-text-warning" data-stat="pending">{{pending}}</div>
+            <div class="sw-stat-label">{{#str}}pending, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="sw-stat-value sw-text-info" data-stat="students">{{students}}</div>
+            <div class="sw-stat-label">{{#str}}students, local_studentworks{{/str}}</div>
+        </article>
+    </section>
+    {{/stats}}
+
+    {{! Filters Section }}
+    <section class="sw-filters" role="search" aria-label="{{#str}}filters, local_studentworks{{/str}}" data-region="filters-form">
+        <div class="sw-search-group">
+            <input type="search"
+                   class="sw-search-input"
+                   name="search"
+                   value="{{searchquery}}"
+                   placeholder="{{#str}}searchplaceholder, local_studentworks{{/str}}"
+                   aria-label="{{#str}}search, local_studentworks{{/str}}"
+                   data-action="search"
+                   autocomplete="off">
+            <button type="button" class="sw-btn sw-btn-primary sw-btn-sm" data-action="search-btn">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <span class="sr-only">{{#str}}search, local_studentworks{{/str}}</span>
+            </button>
+        </div>
+
+        <div class="sw-filter-group">
+            <label class="sw-filter-label" for="filter-type">{{#str}}filterbytype, local_studentworks{{/str}}</label>
+            <select id="filter-type" class="sw-select" data-action="filter-type" aria-label="{{#str}}filterbytype, local_studentworks{{/str}}">
+                <option value="">{{#str}}alltypes, local_studentworks{{/str}}</option>
+                {{#filters.types}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/filters.types}}
+            </select>
+        </div>
+
+        <div class="sw-filter-group">
+            <label class="sw-filter-label" for="filter-status">{{#str}}filterbystatus, local_studentworks{{/str}}</label>
+            <select id="filter-status" class="sw-select" data-action="filter-status" aria-label="{{#str}}filterbystatus, local_studentworks{{/str}}">
+                <option value="">{{#str}}allstatuses, local_studentworks{{/str}}</option>
+                {{#filters.statuses}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/filters.statuses}}
+            </select>
+        </div>
+
+        <div class="sw-filter-group">
+            <label class="sw-filter-label" for="filter-date-from">{{#str}}filterdatefrom, local_studentworks{{/str}}</label>
+            <input type="date"
+                   id="filter-date-from"
+                   class="sw-input"
+                   name="date_from"
+                   value="{{datefrom}}"
+                   data-action="filter-date-from"
+                   aria-label="{{#str}}filterdatefrom, local_studentworks{{/str}}">
+        </div>
+
+        <div class="sw-filter-group">
+            <label class="sw-filter-label" for="filter-date-to">{{#str}}filterdateto, local_studentworks{{/str}}</label>
+            <input type="date"
+                   id="filter-date-to"
+                   class="sw-input"
+                   name="date_to"
+                   value="{{dateto}}"
+                   data-action="filter-date-to"
+                   aria-label="{{#str}}filterdateto, local_studentworks{{/str}}">
+        </div>
+
+        <div class="sw-filter-actions" style="display: flex; gap: 0.5rem; align-self: flex-end;">
+            <button type="button" class="sw-btn sw-btn-primary sw-btn-sm" data-action="search-btn">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                {{#str}}applyfilters, local_studentworks{{/str}}
+            </button>
+            <button type="button" class="sw-btn sw-btn-ghost sw-btn-sm" data-action="clear-filters">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{#str}}clearfilters, local_studentworks{{/str}}
+            </button>
+        </div>
+    </section>
+
+    {{! Export Section }}
+    <section class="sw-export-section" role="region" aria-label="{{#str}}export, local_studentworks{{/str}}">
+        <div class="sw-export-buttons">
+            <a href="{{config.wwwroot}}/local/studentworks/teacher.php?export=csv&type={{#filters.types}}{{#selected}}{{value}}{{/selected}}{{/filters.types}}&status={{#filters.statuses}}{{#selected}}{{value}}{{/selected}}{{/filters.statuses}}&date_from={{datefrom}}&date_to={{dateto}}&search={{searchquery}}&sesskey={{config.sesskey}}" class="sw-btn sw-btn-sm sw-btn-outline">
+                <i class="fa fa-file-csv" aria-hidden="true"></i>
+                {{#str}}exportcsv, local_studentworks{{/str}}
+            </a>
+            <a href="{{config.wwwroot}}/local/studentworks/teacher.php?export=excel&type={{#filters.types}}{{#selected}}{{value}}{{/selected}}{{/filters.types}}&status={{#filters.statuses}}{{#selected}}{{value}}{{/selected}}{{/filters.statuses}}&date_from={{datefrom}}&date_to={{dateto}}&search={{searchquery}}&sesskey={{config.sesskey}}" class="sw-btn sw-btn-sm sw-btn-outline">
+                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                {{#str}}exportexcel, local_studentworks{{/str}}
+            </a>
+        </div>
+    </section>
+
+    {{! Works Table Container with Loader }}
+    <div data-region="works-table-container" class="sw-works-wrapper">
+        {{! Loader }}
+        <div data-region="works-loader" class="sw-loader sw-hidden">
+            <div class="sw-spinner"></div>
+            <span class="sr-only">{{#str}}loading, local_studentworks{{/str}}</span>
+        </div>
+
+        {{#hasworks}}
+        <section class="sw-table-container" role="region" aria-label="{{#str}}workslist, local_studentworks{{/str}}">
+            <table class="sw-table" role="table">
+                <thead>
+                    <tr role="row">
+                        <th scope="col" role="columnheader">{{#str}}worktype, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}topic, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}discipline, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}author, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}status, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}timecreated, local_studentworks{{/str}}</th>
+                        <th scope="col" role="columnheader">{{#str}}actions, local_studentworks{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#works}}
+                    <tr role="row" class="sw-animate-fade-in" style="animation-delay: {{delay}}s;">
+                        <td role="cell">
+                            <span class="sw-work-type">{{worktype}}</span>
+                        </td>
+                        <td role="cell">
+                            <strong>{{topic}}</strong>
+                        </td>
+                        <td role="cell">{{discipline}}</td>
+                        <td role="cell">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="sw-avatar" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                                    {{author_initials}}
+                                </span>
+                                <span>{{author}}</span>
+                            </div>
+                        </td>
+                        <td role="cell">
+                            <span class="sw-badge sw-badge-{{statusclass}}">{{status}}</span>
+                        </td>
+                        <td role="cell">
+                            <time datetime="{{timecreated_iso}}">{{timecreated}}</time>
+                        </td>
+                        <td role="cell">
+                            <div class="sw-actions-group">
+                                <a href="{{viewurl}}" class="sw-btn sw-btn-sm sw-btn-outline"
+                                   aria-label="{{#str}}view, local_studentworks{{/str}}: {{topic}}">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                    <span class="sr-only">{{#str}}view, local_studentworks{{/str}}</span>
+                                </a>
+                                {{#canreview}}
+                                {{^hasreview}}
+                                <a href="{{reviewurl}}" class="sw-btn sw-btn-sm sw-btn-primary"
+                                   aria-label="{{#str}}checkwork, local_studentworks{{/str}}: {{topic}}">
+                                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                                    {{#str}}checkwork, local_studentworks{{/str}}
+                                </a>
+                                {{/hasreview}}
+                                {{#hasreview}}
+                                <a href="{{reviewurl}}" class="sw-btn sw-btn-sm sw-btn-success"
+                                   aria-label="{{#str}}updatereview, local_studentworks{{/str}}: {{topic}}">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                    <span class="sr-only">{{#str}}updatereview, local_studentworks{{/str}}</span>
+                                </a>
+                                {{/hasreview}}
+                                {{/canreview}}
+                                {{#canupdatestatus}}
+                                <select class="sw-select sw-select-sm sw-status-select"
+                                        data-workid="{{id}}"
+                                        data-current-status="{{statuscode}}"
+                                        aria-label="{{#str}}updatestatus, local_studentworks{{/str}}">
+                                    {{#filters.statuses}}
+                                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                                    {{/filters.statuses}}
+                                </select>
+                                {{/canupdatestatus}}
+                            </div>
+                        </td>
+                    </tr>
+                    {{/works}}
+                </tbody>
+            </table>
+        </section>
+
+        {{! Pagination Container }}
+        <div data-region="pagination-container">
+            {{#pagination}}
+            <nav class="sw-pagination" role="navigation" aria-label="{{#str}}pagination, local_studentworks{{/str}}">
+                {{#hasprev}}
+                <button type="button" class="sw-page-btn" data-page="{{prevpage}}" aria-label="{{#str}}previous, local_studentworks{{/str}}">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                {{/hasprev}}
+                {{^hasprev}}
+                <button class="sw-page-btn" disabled aria-disabled="true">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                {{/hasprev}}
+
+                {{#pages}}
+                {{#current}}
+                <span class="sw-page-btn active" aria-current="page">{{number}}</span>
+                {{/current}}
+                {{^current}}
+                <button type="button" class="sw-page-btn" data-page="{{number}}" aria-label="{{#str}}page, local_studentworks{{/str}} {{number}}">{{number}}</button>
+                {{/current}}
+                {{/pages}}
+
+                {{#hasnext}}
+                <button type="button" class="sw-page-btn" data-page="{{nextpage}}" aria-label="{{#str}}next, local_studentworks{{/str}}">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                {{/hasnext}}
+                {{^hasnext}}
+                <button class="sw-page-btn" disabled aria-disabled="true">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                {{/hasnext}}
+            </nav>
+            {{/pagination}}
+        </div>
+        {{/hasworks}}
+
+        {{! Empty State }}
+        {{^hasworks}}
+        <section class="sw-empty" role="region">
+            <div class="sw-empty-icon" aria-hidden="true">
+                <i class="fa fa-inbox"></i>
+            </div>
+            <h3 class="sw-empty-title">{{#str}}noworksfound, local_studentworks{{/str}}</h3>
+            <p class="sw-empty-text">{{#str}}noworksfounddesc, local_studentworks{{/str}}</p>
+            <button type="button" class="sw-btn sw-btn-secondary" data-action="clear-filters">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{#str}}clearfilters, local_studentworks{{/str}}
+            </button>
+        </section>
+        {{/hasworks}}
+    </div>
+
+</div>

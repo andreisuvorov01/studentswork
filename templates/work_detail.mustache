@@ -1,0 +1,222 @@
+{{!
+    Work Detail Template - Corporate UI/UX 2025
+    
+    @template local_studentworks/work_detail
+    
+    Context variables:
+    * work - work object with details
+    * author - author information
+    * files - files information
+    * canreview - boolean
+    * backurl - URL to go back
+}}
+
+<div class="sw-container" data-region="studentworks-detail">
+    
+    {{! Header with Back Button }}
+    <header class="sw-header" role="banner" style="padding: var(--sw-space-5) var(--sw-space-6);">
+        <div class="sw-header-content">
+            <nav aria-label="{{#str}}breadcrumb, local_studentworks{{/str}}">
+                <a href="{{backurl}}" class="sw-btn sw-btn-ghost sw-btn-sm" style="margin-bottom: var(--sw-space-2);">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    {{#str}}back, local_studentworks{{/str}}
+                </a>
+            </nav>
+            <h1 class="sw-title" style="font-size: 1.75rem;">{{work.topic}}</h1>
+            <p class="sw-subtitle">
+                <span class="sw-badge sw-badge-{{work.statusclass}}" style="margin-right: var(--sw-space-2);">
+                    {{work.status}}
+                </span>
+                <span class="sw-work-type">{{work.worktype}}</span>
+            </p>
+        </div>
+    </header>
+
+    {{! Main Content Grid }}
+    <div class="sw-detail-grid">
+        
+        {{! Left Column - Work Information }}
+        <main class="sw-detail-main">
+            
+            {{! Work Details Card }}
+            <section class="sw-info-card" aria-labelledby="details-heading">
+                <h2 id="details-heading" class="sw-section-title" style="margin-bottom: var(--sw-space-4); font-size: 1.125rem;">
+                    <i class="fa fa-info-circle sw-text-primary" aria-hidden="true"></i>
+                    {{#str}}workdetails, local_studentworks{{/str}}
+                </h2>
+                
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}worktype, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">{{work.worktype}}</dd>
+                </div>
+                
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}topic, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">{{work.topic}}</dd>
+                </div>
+                
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}discipline, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">{{work.discipline}}</dd>
+                </div>
+                
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}author, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="sw-avatar" aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                                {{author.initials}}
+                            </span>
+                            <span>{{author.name}}</span>
+                            <span class="sw-text-muted" style="font-size: 0.875rem;"><{{author.email}}></span>
+                        </div>
+                    </dd>
+                </div>
+                
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}timecreated, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">
+                        <time datetime="{{work.timecreated_iso}}">{{work.timecreated}}</time>
+                    </dd>
+                </div>
+                
+                {{#work.timemodified}}
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}timemodified, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">
+                        <time datetime="{{work.timemodified_iso}}">{{work.timemodified}}</time>
+                    </dd>
+                </div>
+                {{/work.timemodified}}
+
+                {{#work.hasgrade}}
+                <div class="sw-info-row">
+                    <dt class="sw-info-label">{{#str}}grade, local_studentworks{{/str}}</dt>
+                    <dd class="sw-info-value">
+                        <span class="sw-badge sw-badge-success" style="font-size: 1.125rem; padding: 0.5rem 1rem;">{{work.grade}}</span>
+                    </dd>
+                </div>
+                {{/work.hasgrade}}
+            </section>
+
+            {{! History Section }}
+            {{#history}}
+            <section class="sw-info-card" aria-labelledby="history-heading">
+                <h2 id="history-heading" class="sw-section-title" style="margin-bottom: var(--sw-space-4); font-size: 1.125rem;">
+                    <i class="fa fa-history sw-text-primary" aria-hidden="true"></i>
+                    {{#str}}history, local_studentworks{{/str}}
+                </h2>
+                <div class="sw-history-list" style="display: flex; flex-direction: column; gap: var(--sw-space-3);">
+                    {{#history_items}}
+                    <div class="sw-history-item" style="display: flex; align-items: flex-start; gap: var(--sw-space-3); padding: var(--sw-space-3); background: var(--sw-secondary-light); border-radius: var(--sw-radius-sm);">
+                        <div class="sw-history-icon" style="width: 32px; height: 32px; border-radius: 50%; background: {{icon_bg}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa {{icon}}" style="color: {{icon_color}}; font-size: 0.875rem;" aria-hidden="true"></i>
+                        </div>
+                        <div class="sw-history-content" style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--sw-text);">{{action}}</div>
+                            <div style="font-size: 0.875rem; color: var(--sw-text-muted);">{{description}}</div>
+                            <time style="font-size: 0.75rem; color: var(--sw-text-muted);" datetime="{{timestamp_iso}}">{{timestamp}}</time>
+                        </div>
+                    </div>
+                    {{/history_items}}
+                </div>
+            </section>
+            {{/history}}
+        </main>
+
+        {{! Right Column - Files & Actions }}
+        <aside class="sw-detail-sidebar">
+            
+            {{! Files Card }}
+            <section class="sw-info-card" aria-labelledby="files-heading">
+                <h2 id="files-heading" class="sw-section-title" style="margin-bottom: var(--sw-space-4); font-size: 1.125rem;">
+                    <i class="fa fa-files-o sw-text-primary" aria-hidden="true"></i>
+                    {{#str}}files, local_studentworks{{/str}}
+                </h2>
+                
+                <div class="sw-files-list">
+                    {{#files.work}}
+                    <div class="sw-file-item">
+                        <div class="sw-file-icon">
+                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="sw-file-info">
+                            <div class="sw-file-name">{{filename}}</div>
+                            <div class="sw-file-meta">{{filesize}}</div>
+                        </div>
+                        <a href="{{downloadurl}}" class="sw-btn sw-btn-sm sw-btn-ghost" 
+                           aria-label="{{#str}}downloadwork, local_studentworks{{/str}}"
+                           title="{{#str}}download, local_studentworks{{/str}}">
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    {{/files.work}}
+                    
+                    {{^files.work}}
+                    <div class="sw-empty" style="padding: var(--sw-space-6); border: none;">
+                        <p class="sw-text-muted" style="margin: 0;">{{#str}}noworkfile, local_studentworks{{/str}}</p>
+                    </div>
+                    {{/files.work}}
+                    
+                    {{#files.review}}
+                    <div class="sw-file-item">
+                        <div class="sw-file-icon sw-file-review">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                        </div>
+                        <div class="sw-file-info">
+                            <div class="sw-file-name">{{filename}}</div>
+                            <div class="sw-file-meta">{{filesize}}</div>
+                        </div>
+                        <a href="{{downloadurl}}" class="sw-btn sw-btn-sm sw-btn-ghost" 
+                           aria-label="{{#str}}downloadreview, local_studentworks{{/str}}"
+                           title="{{#str}}download, local_studentworks{{/str}}">
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    {{/files.review}}
+                </div>
+            </section>
+
+            {{! Actions Card }}
+            <section class="sw-info-card" aria-labelledby="actions-heading">
+                <h2 id="actions-heading" class="sw-section-title" style="margin-bottom: var(--sw-space-4); font-size: 1.125rem;">
+                    <i class="fa fa-bolt sw-text-primary" aria-hidden="true"></i>
+                    {{#str}}actions, local_studentworks{{/str}}
+                </h2>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--sw-space-3);">
+                    {{#files.work}}
+                    <a href="{{files.work.downloadurl}}" class="sw-btn sw-btn-primary">
+                        <i class="fa fa-download" aria-hidden="true"></i>
+                        {{#str}}downloadwork, local_studentworks{{/str}}
+                    </a>
+                    {{/files.work}}
+                    
+                    {{#canreview}}
+                    {{^files.review}}
+                    <a href="{{reviewurl}}" class="sw-btn sw-btn-success">
+                        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                        {{#str}}uploadreview, local_studentworks{{/str}}
+                    </a>
+                    {{/files.review}}
+                    {{#files.review}}
+                    <a href="{{reviewurl}}" class="sw-btn sw-btn-outline">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        {{#str}}updatereview, local_studentworks{{/str}}
+                    </a>
+                    <a href="{{files.review.downloadurl}}" class="sw-btn sw-btn-secondary">
+                        <i class="fa fa-download" aria-hidden="true"></i>
+                        {{#str}}downloadreview, local_studentworks{{/str}}
+                    </a>
+                    {{/files.review}}
+                    {{/canreview}}
+                    
+                    <a href="{{backurl}}" class="sw-btn sw-btn-ghost">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                        {{#str}}back, local_studentworks{{/str}}
+                    </a>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
