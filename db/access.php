@@ -29,49 +29,48 @@ $capabilities = [
     // View own works - for students.
     'local/studentworks:viewown' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
             'student' => CAP_ALLOW,
-            'user' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         ],
-        'clonepermissionsfrom' => 'moodle/course:view'
     ],
 
     // Upload own works - for students.
     'local/studentworks:upload' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
             'student' => CAP_ALLOW,
-            'user' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         ],
-        'clonepermissionsfrom' => 'moodle/course:view'
     ],
 
     // View all works - for teachers and managers.
     'local/studentworks:viewall' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
         ],
         'riskbitmask' => RISK_PERSONAL,
-        'clonepermissionsfrom' => 'moodle/site:viewreports'
     ],
 
     // Review works (upload reviews) - for teachers.
     'local/studentworks:review' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         ],
         'riskbitmask' => RISK_PERSONAL,
-        'clonepermissionsfrom' => 'moodle/grade:manage'
     ],
 ];

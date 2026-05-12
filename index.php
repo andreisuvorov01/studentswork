@@ -29,18 +29,24 @@ require_login();
 
 $context = context_system::instance();
 
-// Check access: either by capability or by course enrollment.
-if (!has_capability('local/studentworks:viewown', $context) &&
-    !\local_studentworks_has_student_access($USER->id, $context)) {
-    throw new moodle_exception('nopermissions', 'error', '', get_string('studentworks:viewown', 'local_studentworks'));
+// Check access: student role in any course
+if (!local_studentworks_is_student() && !local_studentworks_is_teacher()) {
+    throw new moodle_exception('nopermissions', 'error', '', 'Access denied');
 }
 
-// Page setup.
-$PAGE->set_context($context);
-$PAGE->set_url('/local/studentworks/index.php');
-$PAGE->set_title(get_string('pluginname', 'local_studentworks'));
-$PAGE->set_heading(get_string('pluginname', 'local_studentworks'));
-$PAGE->set_pagelayout('standard');
+// Page setup using the standard function.
+local_studentworks_page_setup(
+    '/local/studentworks/index.php',
+    [],
+    'incourse',
+    get_string('pluginname', 'local_studentworks'),
+    get_string('pluginname', 'local_studentworks'),
+    [
+        'bodyclasses' => ['student-dashboard', 'limitedwidth-off'],
+        'allowguest' => false,
+        'context' => $context
+    ]
+);
 
 // Add custom CSS.
 $PAGE->requires->css('/local/studentworks/styles.css');

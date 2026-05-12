@@ -71,7 +71,8 @@ class works_page implements \renderable, \templatable {
         $stats = [
             'total' => 0,
             'reviewed' => 0,
-            'pending' => 0
+            'pending' => 0,
+            'rejected' => 0
         ];
 
         foreach ($this->records as $rec) {
@@ -81,26 +82,46 @@ class works_page implements \renderable, \templatable {
 
             $stats['total']++;
 
-            // Determine status based on review file existence.
-            $fs = get_file_storage();
-            $reviewfiles = $fs->get_area_files(
-                $this->context->id,
-                'local_studentworks',
-                'reviewfile',
-                $rec->id,
-                'filename',
-                false
-            );
-
-            $hasreview = !empty($reviewfiles);
-            if ($hasreview) {
-                $stats['reviewed']++;
-                $status = get_string('reviewed', 'local_studentworks');
-                $statusclass = 'success';
+            // Determine status from database field if available, otherwise fallback to file-based detection.
+            if (isset($rec->status)) {
+                $statuscode = $rec->status;
+                $status = get_string('status_' . $statuscode, 'local_studentworks');
+                $statusclass = $this->get_status_class($statuscode);
+                $hasreview = in_array($statuscode, [
+                    \local_studentworks\manager\work_manager::STATUS_REVIEWED,
+                    \local_studentworks\manager\work_manager::STATUS_UNDER_REVIEW
+                ]);
+                
+                // Update stats based on status
+                if ($statuscode === \local_studentworks\manager\work_manager::STATUS_REVIEWED) {
+                    $stats['reviewed']++;
+                } else if ($statuscode === \local_studentworks\manager\work_manager::STATUS_REJECTED) {
+                    $stats['rejected']++;
+                } else {
+                    $stats['pending']++;
+                }
             } else {
-                $stats['pending']++;
-                $status = get_string('submitted', 'local_studentworks');
-                $statusclass = 'warning';
+                // Fallback to file-based status detection.
+                $fs = get_file_storage();
+                $reviewfiles = $fs->get_area_files(
+                    $this->context->id,
+                    'local_studentworks',
+                    'reviewfile',
+                    $rec->id,
+                    'filename',
+                    false
+                );
+
+                $hasreview = !empty($reviewfiles);
+                if ($hasreview) {
+                    $status = get_string('reviewed', 'local_studentworks');
+                    $statusclass = 'success';
+                    $stats['reviewed']++;
+                } else {
+                    $status = get_string('submitted', 'local_studentworks');
+                    $statusclass = 'warning';
+                    $stats['pending']++;
+                }
             }
 
             $viewurl = new \moodle_url('/local/studentworks/view.php', ['id' => $rec->id]);
@@ -141,5 +162,21 @@ class works_page implements \renderable, \templatable {
      */
     private function format_date(int $timestamp): string {
         return userdate($timestamp, get_string('strftimedate', 'langconfig'));
+    }
+
+    /**
+     * Get CSS class for status.
+     *
+     * @param string $status Status code
+     * @return string CSS class
+     */
+    private function get_status_class(string $status): string {
+        $classes = [
+            'submitted' => 'warning',
+            'under_review' => 'info',
+            'reviewed' => 'success',
+            'rejected' => 'danger',
+        ];
+        return $classes[$status] ?? 'secondary';
     }
 }

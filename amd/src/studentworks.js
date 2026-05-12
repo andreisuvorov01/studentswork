@@ -258,19 +258,34 @@ define([
      * Initialize status update dropdowns
      */
     function initStatusUpdates() {
+        console.log('[StudentWorks Debug] initStatusUpdates() called');
         const statusSelects = document.querySelectorAll('.sw-status-select');
+        console.log('[StudentWorks Debug] Found status selects:', statusSelects.length);
 
         statusSelects.forEach(function(select) {
-            select.addEventListener('change', function() {
+            // Remove existing listener if any
+            const oldListener = select._statusChangeListener;
+            if (oldListener) {
+                select.removeEventListener('change', oldListener);
+            }
+
+            // Create new listener
+            const listener = function() {
+                console.log('[StudentWorks Debug] Status select changed');
                 const workid = this.getAttribute('data-workid');
                 const newStatus = this.value;
                 const currentStatus = this.getAttribute('data-current-status');
 
+                console.log('[StudentWorks Debug] workid:', workid, 'newStatus:', newStatus, 'currentStatus:', currentStatus);
+
                 if (newStatus === currentStatus) {
+                    console.log('[StudentWorks Debug] Status unchanged, skipping');
                     return;
                 }
 
+                console.log('[StudentWorks Debug] Calling updateWorkStatus...');
                 updateWorkStatus(workid, newStatus).then(function(response) {
+                    console.log('[StudentWorks Debug] updateWorkStatus response:', response);
                     if (response.success) {
                         showToast(getString('statusupdatesuccess'), 'success');
                         select.setAttribute('data-current-status', newStatus);
@@ -282,11 +297,17 @@ define([
                         showToast(getString('statusupdateerror'), 'danger');
                         select.value = currentStatus;
                     }
-                }).catch(function() {
+                }).catch(function(error) {
+                    console.error('[StudentWorks Debug] updateWorkStatus error:', error);
                     showToast(getString('statusupdateerror'), 'danger');
                     select.value = currentStatus;
                 });
-            });
+            };
+
+            // Store listener reference and attach
+            select._statusChangeListener = listener;
+            select.addEventListener('change', listener);
+            console.log('[StudentWorks Debug] Listener attached to select with workid:', select.getAttribute('data-workid'));
         });
     }
 
@@ -311,12 +332,16 @@ define([
      * @return {Promise} Promise
      */
     function updateWorkStatus(workid, status) {
+        console.log('[StudentWorks Debug] updateWorkStatus called with workid:', workid, 'status:', status);
         var url = M.cfg.wwwroot + '/local/studentworks/teacher.php';
         var params = new URLSearchParams();
         params.append('action', 'update_status');
         params.append('workid', workid);
         params.append('status', status);
         params.append('sesskey', M.cfg.sesskey);
+
+        console.log('[StudentWorks Debug] Sending POST to:', url);
+        console.log('[StudentWorks Debug] POST params:', params.toString());
 
         return fetch(url, {
             method: 'POST',
@@ -325,6 +350,7 @@ define([
             },
             body: params.toString()
         }).then(function(response) {
+            console.log('[StudentWorks Debug] Response status:', response.status);
             return response.json();
         });
     }
@@ -610,6 +636,10 @@ define([
         if (stats.pending !== undefined) {
             const pendingEl = document.querySelector('.sw-stat-value[data-stat="pending"]');
             if (pendingEl) pendingEl.textContent = stats.pending;
+        }
+        if (stats.rejected !== undefined) {
+            const rejectedEl = document.querySelector('.sw-stat-value[data-stat="rejected"]');
+            if (rejectedEl) rejectedEl.textContent = stats.rejected;
         }
         if (stats.students !== undefined) {
             const studentsEl = document.querySelector('.sw-stat-value[data-stat="students"]');

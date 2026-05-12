@@ -24,6 +24,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot . '/local/studentworks/lib.php');
+
 require_login();
 
 $context = context_system::instance();
@@ -32,22 +33,37 @@ $context = context_system::instance();
 $id = optional_param('id', 0, PARAM_INT);
 $review = optional_param('review', 0, PARAM_BOOL);
 
-// Check upload capability for new works.
+// Check access based on action
 if (!$id && !$review) {
-    if (!has_capability('local/studentworks:upload', $context) &&
-        !\local_studentworks_has_student_access($USER->id, $context)) {
-        throw new moodle_exception('nopermissions', 'error', '', get_string('studentworks:upload', 'local_studentworks'));
+    // New work upload - student or teacher
+    if (!local_studentworks_is_student() && !local_studentworks_is_teacher()) {
+        throw new moodle_exception('nopermissions', 'error', '', 'Access denied');
     }
 } else if ($review) {
-    if (!has_capability('local/studentworks:review', $context) &&
-        !\local_studentworks_has_teacher_access($USER->id, $context)) {
-        throw new moodle_exception('nopermissions', 'error', '', get_string('studentworks:review', 'local_studentworks'));
+    // Review upload - teacher only
+    if (!local_studentworks_is_teacher()) {
+        throw new moodle_exception('nopermissions', 'error', '', 'Access denied - teacher role required');
     }
 }
 
-$PAGE->set_context($context);
-$PAGE->set_url('/local/studentworks/upload.php', ['id' => $id, 'review' => $review]);
-$PAGE->set_pagelayout('standard');
+// Set up the page using the standard page setup function.
+// Note: capabilities are checked explicitly above, so we don't pass them here.
+// This avoids the OR logic issue in page_setup.
+$filteredparams = local_studentworks_page_setup(
+    '/local/studentworks/upload.php',
+    ['id' => $id, 'review' => $review],
+    'standard',
+    get_string('uploadwork', 'local_studentworks'),
+    get_string('uploadwork', 'local_studentworks'),
+    [
+        'bodyclasses' => ['work-upload-page'],
+        'allowguest' => false,
+        'paramdefinitions' => [
+            ['name' => 'id', 'type' => PARAM_INT, 'required' => false, 'default' => 0],
+            ['name' => 'review', 'type' => PARAM_BOOL, 'required' => false, 'default' => 0]
+        ]
+    ]
+);
 
 // Add custom CSS.
 $PAGE->requires->css('/local/studentworks/styles.css');
@@ -58,10 +74,12 @@ if ($review && $id) {
     $PAGE->set_title(get_string('uploadreview', 'local_studentworks'));
     $PAGE->set_heading(get_string('uploadreview', 'local_studentworks'));
 
-    $mform = new \local_studentworks\form\review_form(null, ['workid' => $id]);
+    $cancelurl = new moodle_url('/local/studentworks/teacher.php');
+    $formaction = new moodle_url('/local/studentworks/upload.php', ['id' => $id, 'review' => 1]);
+    $mform = new \local_studentworks\form\review_form($formaction->out(false), ['workid' => $id]);
 
     if ($mform->is_cancelled()) {
-        redirect(new moodle_url('/local/studentworks/view.php', ['id' => $id]));
+        redirect($cancelurl);
     }
 
     if ($data = $mform->get_data()) {
@@ -120,32 +138,19 @@ if ($review && $id) {
 $PAGE->set_title(get_string('uploadwork', 'local_studentworks'));
 $PAGE->set_heading(get_string('uploadwork', 'local_studentworks'));
 
-$mform = new \local_studentworks\form\studentwork_form();
+$cancelurl = new moodle_url('/local/studentworks/index.php');
+$formaction = new moodle_url('/local/studentworks/upload.php');
+$mform = new \local_studentworks\form\studentwork_form($formaction->out(false), null);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/local/studentworks/index.php'));
+    redirect($cancelurl);
 }
 
+error_log('[SW] Before get_data check');
+
 if ($data = $mform->get_data()) {
-    // Check for duplicates.
-    $existing = $DB->get_record_sql(
-        "SELECT * FROM {local_studentworks}
-         WHERE userid = :userid
-         AND LOWER(topic) = LOWER(:topic)
-         AND LOWER(discipline) = LOWER(:discipline)
-         AND worktype = :worktype",
-        [
-            'userid' => $USER->id,
-            'topic' => trim($data->topic),
-            'discipline' => trim($data->discipline),
-            'worktype' => $data->worktype
-        ]
-    );
-
-    if ($existing) {
-        throw new moodle_exception('duplicatework', 'local_studentworks');
-    }
-
+    error_log('[SW] Form submitted by USER->id: ' . $USER->id);
+    
     $record = new stdClass();
     $record->userid = $USER->id;
     $record->worktype = $data->worktype;
@@ -156,6 +161,7 @@ if ($data = $mform->get_data()) {
     $record->status = \local_studentworks\manager\work_manager::STATUS_SUBMITTED;
 
     $id = $DB->insert_record('local_studentworks', $record);
+    error_log('[SW] Record created, ID: ' . $id);
 
     // Notify teachers about new work.
     $work = $DB->get_record('local_studentworks', ['id' => $id]);
@@ -176,14 +182,18 @@ if ($data = $mform->get_data()) {
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'local_studentworks', 'workfile', $id, 'filename', false);
         if (empty($files)) {
+            error_log('[SW] ERROR: No files saved');
             throw new moodle_exception('fileuploaderror', 'local_studentworks');
         }
+        error_log('[SW] Success: ' . count($files) . ' file(s) saved');
     } catch (Exception $e) {
+        error_log('[SW] Exception: ' . $e->getMessage());
         // Delete record on file upload error.
         $DB->delete_records('local_studentworks', ['id' => $id]);
         throw new moodle_exception('fileuploaderror', 'local_studentworks');
     }
 
+    error_log('[SW] Redirecting to index.php');
     redirect(
         new moodle_url('/local/studentworks/index.php'),
         get_string('uploadsuccess', 'local_studentworks'),

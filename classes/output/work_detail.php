@@ -93,8 +93,12 @@ class work_detail implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output): array {
         $worktypes = \local_studentworks_get_worktypes();
 
-        // Determine status.
-        if ($this->reviewfile) {
+        // Determine status from database field if available, otherwise fallback to file-based detection.
+        if (isset($this->work->status)) {
+            $statuscode = $this->work->status;
+            $status = get_string('status_' . $statuscode, 'local_studentworks');
+            $statusclass = $this->get_status_class($statuscode);
+        } else if ($this->reviewfile) {
             $status = get_string('reviewed', 'local_studentworks');
             $statusclass = 'success';
         } else {
@@ -249,5 +253,21 @@ class work_detail implements \renderable, \templatable {
      */
     private function format_date(int $timestamp): string {
         return userdate($timestamp, get_string('strftimedatetime', 'langconfig'));
+    }
+
+    /**
+     * Get CSS class for status.
+     *
+     * @param string $status Status code
+     * @return string CSS class
+     */
+    private function get_status_class(string $status): string {
+        $classes = [
+            'submitted' => 'warning',
+            'under_review' => 'info',
+            'reviewed' => 'success',
+            'rejected' => 'danger',
+        ];
+        return $classes[$status] ?? 'secondary';
     }
 }

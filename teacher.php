@@ -33,10 +33,9 @@ require_login();
 $context = context_system::instance();
 $PAGE->set_context($context);
 
-// Check access: either by capability or by course enrollment (teacher role).
-if (!has_capability('local/studentworks:viewall', $context) &&
-    !\local_studentworks_has_teacher_access($USER->id, $context)) {
-    throw new moodle_exception('nopermissions', 'error', '', get_string('studentworks:viewall', 'local_studentworks'));
+// Check access: teacher role in any course
+if (!local_studentworks_is_teacher()) {
+    throw new moodle_exception('nopermissions', 'error', '', 'Access denied - teacher role required');
 }
 
 // Get parameters.
@@ -52,11 +51,21 @@ $export = optional_param('export', '', PARAM_ALPHA);
 
 // Handle AJAX status update.
 if ($action === 'update_status') {
+    error_log('[StudentWorks Debug] update_status action detected');
+    error_log('[StudentWorks Debug] POST data: ' . print_r($_POST, true));
+    error_log('[StudentWorks Debug] Sesskey from request: ' . optional_param('sesskey', '', PARAM_RAW));
+    error_log('[StudentWorks Debug] Expected sesskey: ' . sesskey());
+    
     require_sesskey();
+    
     $workid = required_param('workid', PARAM_INT);
-    $status = required_param('status', PARAM_ALPHA);
+    $status = required_param('status', PARAM_ALPHANUMEXT);
+    
+    error_log('[StudentWorks Debug] Updating work ' . $workid . ' to status ' . $status);
 
     $result = \local_studentworks\manager\work_manager::update_status($workid, $status);
+    
+    error_log('[StudentWorks Debug] Update result: ' . ($result ? 'true' : 'false'));
 
     header('Content-Type: application/json');
     echo json_encode(['success' => $result]);
@@ -182,18 +191,58 @@ if (!empty($export)) {
     exit;
 }
 
-// Page setup.
-$PAGE->set_url('/local/studentworks/teacher.php', [
+// Page setup using local_studentworks_page_setup function.
+$urlparams = [
     'page' => $page,
     'type' => $filtertype,
     'status' => $filterstatus,
     'date_from' => $datefrom,
     'date_to' => $dateto,
     'search' => $search
-]);
-$PAGE->set_title(get_string('allworks', 'local_studentworks'));
-$PAGE->set_heading(get_string('allworks', 'local_studentworks'));
-$PAGE->set_pagelayout('standard');
+];
+
+// Define parameter definitions for filtering.
+$paramdefinitions = [
+    ['name' => 'page', 'type' => PARAM_INT, 'required' => false, 'default' => 0],
+    ['name' => 'type', 'type' => PARAM_ALPHA, 'required' => false, 'default' => ''],
+    ['name' => 'status', 'type' => PARAM_ALPHA, 'required' => false, 'default' => ''],
+    ['name' => 'date_from', 'type' => PARAM_TEXT, 'required' => false, 'default' => ''],
+    ['name' => 'date_to', 'type' => PARAM_TEXT, 'required' => false, 'default' => ''],
+    ['name' => 'search', 'type' => PARAM_TEXT, 'required' => false, 'default' => ''],
+];
+
+$filteredparams = local_studentworks_page_setup(
+    '/local/studentworks/teacher.php',
+    $urlparams,
+    'incourse',
+    get_string('allworks', 'local_studentworks'),
+    get_string('allworks', 'local_studentworks'),
+    [
+        'bodyclasses' => ['teacher-dashboard', 'limitedwidth-off'],
+        'hideblocks' => false,
+        'paramdefinitions' => $paramdefinitions
+    ]
+);
+
+// Assign filtered parameters to variables.
+if (isset($filteredparams['page'])) {
+    $page = $filteredparams['page'];
+}
+if (isset($filteredparams['type'])) {
+    $filtertype = $filteredparams['type'];
+}
+if (isset($filteredparams['status'])) {
+    $filterstatus = $filteredparams['status'];
+}
+if (isset($filteredparams['date_from'])) {
+    $datefrom = $filteredparams['date_from'];
+}
+if (isset($filteredparams['date_to'])) {
+    $dateto = $filteredparams['date_to'];
+}
+if (isset($filteredparams['search'])) {
+    $search = $filteredparams['search'];
+}
 
 // Add custom CSS.
 $PAGE->requires->css('/local/studentworks/styles.css');

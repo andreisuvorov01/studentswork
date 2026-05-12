@@ -38,6 +38,10 @@
             <div class="sw-stat-label">{{#str}}pending, local_studentworks{{/str}}</div>
         </article>
         <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="sw-stat-value sw-text-danger" data-stat="rejected">{{rejected}}</div>
+            <div class="sw-stat-label">{{#str}}status_rejected, local_studentworks{{/str}}</div>
+        </article>
+        <article class="sw-stat-card sw-animate-fade-in" style="animation-delay: 0.4s;">
             <div class="sw-stat-value sw-text-info" data-stat="students">{{students}}</div>
             <div class="sw-stat-label">{{#str}}students, local_studentworks{{/str}}</div>
         </article>
@@ -162,8 +166,8 @@
                         </td>
                         <td role="cell">{{discipline}}</td>
                         <td role="cell">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span class="sw-avatar" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                            <div class="sw-author-cell">
+                                <span class="sw-avatar" aria-hidden="true">
                                     {{author_initials}}
                                 </span>
                                 <span>{{author}}</span>

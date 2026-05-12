@@ -107,6 +107,7 @@ class teacher_dashboard implements \renderable, \templatable {
             'total' => 0,
             'reviewed' => 0,
             'pending' => 0,
+            'rejected' => 0,
             'students' => []
         ];
 
@@ -119,6 +120,8 @@ class teacher_dashboard implements \renderable, \templatable {
                 // Use database status field.
                 if ($rec->status === \local_studentworks\manager\work_manager::STATUS_REVIEWED) {
                     $stats['reviewed']++;
+                } else if ($rec->status === \local_studentworks\manager\work_manager::STATUS_REJECTED) {
+                    $stats['rejected']++;
                 } else {
                     $stats['pending']++;
                 }
@@ -188,6 +191,17 @@ class teacher_dashboard implements \renderable, \templatable {
             $viewurl = new \moodle_url('/local/studentworks/view.php', ['id' => $rec->id]);
             $reviewurl = new \moodle_url('/local/studentworks/upload.php', ['id' => $rec->id, 'review' => 1]);
 
+            // Build status options for this specific work
+            $statusoptions = [];
+            $allstatuses = \local_studentworks\manager\work_manager::get_statuses();
+            foreach ($allstatuses as $code => $label) {
+                $statusoptions[] = [
+                    'value' => $code,
+                    'label' => $label,
+                    'selected' => $statuscode === $code,
+                ];
+            }
+
             $data[] = [
                 'id' => $rec->id,
                 'worktype' => $worktypes[$rec->worktype] ?? $rec->worktype,
@@ -206,6 +220,7 @@ class teacher_dashboard implements \renderable, \templatable {
                 'canreview' => true,
                 'hasreview' => (bool)$hasreview,
                 'canupdatestatus' => $this->usestatusfield,
+                'statuses' => $statusoptions,
                 'delay' => $index * 0.05,
             ];
             $index++;

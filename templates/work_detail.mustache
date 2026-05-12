@@ -63,12 +63,12 @@
                 <div class="sw-info-row">
                     <dt class="sw-info-label">{{#str}}author, local_studentworks{{/str}}</dt>
                     <dd class="sw-info-value">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span class="sw-avatar" aria-hidden="true" style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                        <div class="sw-author-cell">
+                            <span class="sw-avatar sw-avatar-sm" aria-hidden="true">
                                 {{author.initials}}
                             </span>
                             <span>{{author.name}}</span>
-                            <span class="sw-text-muted" style="font-size: 0.875rem;"><{{author.email}}></span>
+                            <span class="sw-text-muted" style="font-size: 0.875rem;">&lt;{{author.email}}&gt;</span>
                         </div>
                     </dd>
                 </div>

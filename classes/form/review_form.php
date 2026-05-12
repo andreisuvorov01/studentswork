@@ -24,13 +24,14 @@ class review_form extends \moodleform {
             ['subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => ['.pdf']]);
         $mform->addRule('reviewfile', get_string('required'), 'required', null, 'client');
 
-        // Add grade field (0-100).
+        // Add grade field (2-5).
         $gradeoptions = [
-            '' => get_string('nograde', 'local_studentworks')
+            '' => get_string('nograde', 'local_studentworks'),
+            2 => '2',
+            3 => '3',
+            4 => '4',
+            5 => '5'
         ];
-        for ($i = 0; $i <= 100; $i++) {
-            $gradeoptions[$i] = $i;
-        }
         $mform->addElement('select', 'grade', get_string('grade', 'local_studentworks'), $gradeoptions);
         $mform->setType('grade', PARAM_INT);
         $mform->setDefault('grade', '');

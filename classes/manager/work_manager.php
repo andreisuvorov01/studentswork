@@ -156,13 +156,19 @@ class work_manager {
     public static function update_status(int $workid, string $status, string $message = ''): bool {
         global $DB, $USER;
 
+        error_log('[StudentWorks Debug] update_status called with workid=' . $workid . ', status=' . $status);
+
         $validstatuses = array_keys(self::get_statuses());
+        error_log('[StudentWorks Debug] Valid statuses: ' . json_encode($validstatuses));
+        
         if (!in_array($status, $validstatuses)) {
+            error_log('[StudentWorks Debug] Status "' . $status . '" not in valid statuses list');
             return false;
         }
 
         $work = $DB->get_record('local_studentworks', ['id' => $workid]);
         if (!$work) {
+            error_log('[StudentWorks Debug] Work with id=' . $workid . ' not found');
             return false;
         }
 
@@ -170,7 +176,9 @@ class work_manager {
         $work->status = $status;
         $work->timemodified = time();
 
+        error_log('[StudentWorks Debug] Updating work: old status=' . $oldstatus . ', new status=' . $status);
         $result = $DB->update_record('local_studentworks', $work);
+        error_log('[StudentWorks Debug] Update result: ' . ($result ? 'true' : 'false'));
 
         // Send notification to student.
         if ($result && $oldstatus !== $status) {

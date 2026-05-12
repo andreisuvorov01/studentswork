@@ -27,39 +27,39 @@ require_once($CFG->dirroot . '/local/studentworks/lib.php');
 
 require_login();
 
-$id = required_param('id', PARAM_INT);
-
 $context = context_system::instance();
-$PAGE->set_context($context);
-$PAGE->set_url('/local/studentworks/view.php', ['id' => $id]);
-$PAGE->set_title(get_string('viewwork', 'local_studentworks'));
-$PAGE->set_heading(get_string('viewwork', 'local_studentworks'));
-$PAGE->set_pagelayout('standard');
+
+// Get work ID and data
+$params = local_studentworks_page_setup(
+    '/local/studentworks/view.php',
+    [],
+    'incourse',
+    get_string('viewwork', 'local_studentworks'),
+    get_string('viewwork', 'local_studentworks'),
+    [
+        'bodyclasses' => ['work-detail-view', 'limitedwidth-off'],
+        'allowguest' => false,
+        'paramdefinitions' => [
+            ['name' => 'id', 'type' => PARAM_INT, 'required' => true]
+        ]
+    ]
+);
+
+$id = $params['id'];
 
 // Add custom CSS.
 $PAGE->requires->css('/local/studentworks/styles.css');
-
-// Load AMD module.
-$PAGE->requires->js_call_amd('local_studentworks/studentworks', 'init', ['detail']);
 
 // Get work data.
 $work = $DB->get_record('local_studentworks', ['id' => $id], '*', MUST_EXIST);
 $author = $DB->get_record('user', ['id' => $work->userid], '*', MUST_EXIST);
 
-// Check permissions: by capability, course role, or ownership.
-$canviewall = has_capability('local/studentworks:viewall', $context) ||
-              \local_studentworks_has_teacher_access($USER->id, $context);
+// Check permissions: teacher can view all, student can view only own
+$isteacher = local_studentworks_is_teacher();
 $isowner = $USER->id == $work->userid;
-$hasstudentaccess = has_capability('local/studentworks:viewown', $context) ||
-                    \local_studentworks_has_student_access($USER->id, $context);
 
-if (!$canviewall && !$isowner && !$hasstudentaccess) {
-    throw new moodle_exception('nopermissions', 'error');
-}
-
-// If user only has student access, they can only view their own works.
-if (!$canviewall && $hasstudentaccess && !$isowner) {
-    throw new moodle_exception('nopermissions', 'error');
+if (!$isteacher && !$isowner) {
+    throw new moodle_exception('nopermissions', 'error', '', 'Access denied');
 }
 
 // Get files.
@@ -71,12 +71,12 @@ $workfile = reset($workfiles);
 $reviewfile = reset($reviewfiles);
 
 // Determine back URL.
-$backurl = $canviewall
+$backurl = $isteacher
     ? new moodle_url('/local/studentworks/teacher.php')
     : new moodle_url('/local/studentworks/index.php');
 
-// Can review if user has viewall capability and is not the owner.
-$canreview = $canviewall && !$isowner;
+// Can review if user is teacher and not the owner.
+$canreview = $isteacher && !$isowner;
 
 // Render output.
 $output = $PAGE->get_renderer('local_studentworks');

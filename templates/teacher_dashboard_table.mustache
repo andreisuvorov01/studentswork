@@ -32,8 +32,8 @@
                 </td>
                 <td role="cell">{{discipline}}</td>
                 <td role="cell">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="sw-avatar" aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--sw-primary), var(--sw-info)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                    <div class="sw-author-cell">
+                        <span class="sw-avatar" aria-hidden="true">
                             {{author_initials}}
                         </span>
                         <span>{{author}}</span>
@@ -73,9 +73,9 @@
                                 data-workid="{{id}}"
                                 data-current-status="{{statuscode}}"
                                 aria-label="{{#str}}updatestatus, local_studentworks{{/str}}">
-                            {{#filters.statuses}}
+                            {{#statuses}}
                             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                            {{/filters.statuses}}
+                            {{/statuses}}
                         </select>
                         {{/canupdatestatus}}
                     </div>
